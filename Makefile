@@ -2,9 +2,7 @@ clean:
 	rm -rf workspace/*
 
 clone:
-	mkdir workspace
-	mkdir workspace/llvmwasm
-	mkdir workspace/llvmwasm/llvm-build
+	mkdir -p workspace/llvmwasm/llvm-build
 	git clone https://github.com/sanderspies/llvm workspace/llvmwasm/llvm
 	cd ./workspace/llvmwasm/llvm/tools && git clone https://github.com/sanderspies/lld lld
 	git clone --recursive https://github.com/sanderspies/wabt workspace/wabt
@@ -15,7 +13,7 @@ build-image:
 	cd docker && docker build . -t ocaml-wasm-base
 
 run-container:
-	docker run --name ocaml-wasm-bash --rm -dit -v /Users/Sander/Projects/ocaml-wasm-docker/workspace:/workspace ocaml-wasm-base bash	
+	docker run --name ocaml-wasm-bash --rm -dit -v `pwd`/workspace:/workspace ocaml-wasm-base bash
 
 build-llvm:	
 	docker exec -w /workspace/llvmwasm/llvm-build ocaml-wasm-bash cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$INSTALLDIR -DLLVM_TARGETS_TO_BUILD= -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly /workspace/llvmwasm/llvm 
